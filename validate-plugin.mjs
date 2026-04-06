@@ -33,7 +33,14 @@ function warn (file, message) {
  * @returns {Promise<unknown>}
  */
 async function readJson (filePath) {
-  const raw = await readFile(filePath, 'utf8')
+  /** @type {string} */
+  let raw
+  try {
+    raw = await readFile(filePath, 'utf8')
+  } catch (err) {
+    error(filePath, `Could not read file: ${/** @type {Error} */ (err).message}`)
+    return undefined
+  }
   try {
     return JSON.parse(raw)
   } catch {

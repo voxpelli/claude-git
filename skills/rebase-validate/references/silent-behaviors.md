@@ -1,4 +1,4 @@
-# Tool-Specific Thresholds
+# Silent Behaviors
 
 Three validation tools have thresholds that silently exclude files from
 analysis. No warning, no error — the file is simply absent from results.

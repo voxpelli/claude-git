@@ -1,6 +1,6 @@
 ---
 name: rebase-validate
-description: "Validates git rebase correctness using a five-layer pipeline (range-diff, sem, weave, jscpd, tests). Trigger after completing a git rebase (especially stacked PRs with --update-refs), when comparing branches post-rebase, or when verifying conflict resolution correctness. Relevant phrases: 'validate rebase', 'check rebase', 'did we lose anything', 'compare before and after rebase', 'duplicate test blocks', 'rebase validation', 'run range-diff', 'lost code during rebase', 'rebase artifacts', 'conflict resolution verification'."
+description: "Validates git rebase correctness using a five-layer pipeline (range-diff, sem, weave, jscpd, tests). This skill should be used after completing a git rebase (especially stacked PRs with --update-refs), when comparing branches post-rebase, or when verifying conflict resolution correctness. Covers scenarios like: 'validate rebase', 'check rebase', 'did we lose anything', 'compare before and after rebase', 'duplicate test blocks', 'rebase validation', 'run range-diff', 'lost code during rebase', 'rebase artifacts', 'conflict resolution verification'."
 user-invocable: true
 allowed-tools:
   - Bash
@@ -78,6 +78,7 @@ git range-diff -s origin/old-branch..origin/old-tip  new-base..new-tip
 git range-diff -s pre-rebase/branch..old-tip  new-base..new-tip
 
 # Immediately after rebase (reflog — only works for the tip branch)
+# Assumes @{u} has not moved since the rebase (e.g. no force-push to upstream)
 git range-diff @{u} @{1} @
 ```
 
@@ -92,7 +93,19 @@ git range-diff @{u} @{1} @
 
 Use `--creation-factor=90` for rebases with heavy conflict resolution — the
 default (60) can misclassify heavily-resolved commits as drop+add instead of
-altered.
+altered. The algorithm builds a cost matrix via "diff of diffs" and solves
+least-cost assignment — higher creation-factor values make it more forgiving
+of large changes when pairing commits.
+
+Additional useful flags:
+- `--left-only` — suppress commits missing from the old range (show only
+  what's new or changed)
+- `--right-only` — suppress commits missing from the new range (show only
+  what was dropped or changed)
+
+**Note**: range-diff ignores merge commits by default. This is correct for
+rebases (which linearize history) but matters if comparing branches that
+contain merges.
 
 For a quick count:
 ```bash
@@ -105,7 +118,7 @@ git range-diff -s ... | grep -c '>'   # added
 ## Step 2: `sem diff` (Entity-Level)
 
 Compares named code entities between branches. See
-`references/tool-thresholds.md` for limitations.
+`references/silent-behaviors.md` for limitations.
 
 ```bash
 sem diff --format json old-branch..new-branch
@@ -180,6 +193,26 @@ done < <(find . -path ./node_modules -prune -o \( -name '*.spec.js' -o -name '*.
 Cross-scope duplicates (same name in different `describe()` blocks) are usually
 intentional. Same-scope duplicates are bugs.
 
+### 4c: ast-grep for structural patterns (optional)
+
+If `ast-grep` is installed (`brew install ast-grep`), it can complement jscpd
+with **structural** pattern matching — finding code that matches a known shape
+rather than detecting unknown duplicates:
+
+```bash
+command -v sg >/dev/null 2>&1 || echo "ast-grep not installed — skipping"
+
+# Find all test blocks (useful for manual review of test structure)
+sg -p 'it($NAME, $$$BODY)' -l js .
+
+# Find all describe blocks wrapping test blocks
+sg -p 'describe($NAME, $$$BODY)' -l js .
+```
+
+ast-grep is a search tool, not a clone detector — it finds known patterns,
+while jscpd finds unknown duplicates. Use ast-grep when you know what rebase
+artifact to look for. No silent file-size thresholds (unlike jscpd).
+
 ## Step 5: Functional Verification
 
 The definitive oracle. Every other layer is advisory.
@@ -249,5 +282,5 @@ nothing until results arrive.
 
 ## Further Reading
 
-See `references/tool-thresholds.md` for the silent exclusion thresholds that
+See `references/silent-behaviors.md` for the silent exclusion thresholds that
 make test files invisible to sem/weave/jscpd.

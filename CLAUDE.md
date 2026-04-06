@@ -17,7 +17,7 @@ agent-assisted workflows.
 skills/
   rebase-validate/SKILL.md               # Five-layer rebase validation pipeline
     references/
-      tool-thresholds.md                 # Silent exclusion thresholds for sem/weave/jscpd
+      silent-behaviors.md                 # Silent behaviors: tool thresholds, rerere, --update-refs
 validate-plugin.mjs                      # Structural validator (the only JS in the repo)
 ```
 
@@ -61,7 +61,7 @@ component types. It checks whichever components exist:
 The rebase-validate skill works best with
 [sem](https://github.com/Ataraxy-Labs/sem) and
 [weave](https://github.com/Ataraxy-Labs/weave) installed but degrades
-gracefully without them. See `skills/rebase-validate/references/tool-thresholds.md`
+gracefully without them. See `skills/rebase-validate/references/silent-behaviors.md`
 for their silent exclusion thresholds.
 
 ## Design Principles
