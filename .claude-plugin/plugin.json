@@ -1,0 +1,12 @@
+{
+  "name": "vp-git",
+  "version": "0.1.0",
+  "description": "Git workflow safety skills: validation, verification, and repair for rebase, merge, and stacked PR workflows.",
+  "author": {
+    "name": "Pelle Wessman",
+    "url": "https://github.com/voxpelli"
+  },
+  "repository": "https://github.com/voxpelli/claude-git",
+  "license": "MIT",
+  "keywords": ["git", "rebase", "validation", "stacked-prs", "merge", "workflow"]
+}
