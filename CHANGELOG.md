@@ -4,18 +4,24 @@
 
 ### Changes
 
-- **Replace in-tree Layer 5 with `skill-check`**. The custom
+- **Pilot: replace in-tree Layer 5 with `skill-check`** (treat as
+  experimental for this repo; do not promote as a recommended pattern
+  until we have lived with it for a release cycle or two). The custom
   `check-skill-spec.mjs` and its fixture corpus shipped in 0.4.0
   duplicated `thedaviddias/skill-check`'s 22-rule validator with five
   in-house rules. Drop the custom validator; invoke
   `skill-check check --no-security-scan` as `npm run check:spec`.
-  skill-check provides SARIF, auto-fix, body-splitting, baseline diff,
-  and quality scoring for free. Net: ~80% code deletion vs 0.4.0.
+  Net: ~80% code deletion vs 0.4.0. Trade-off accepted with eyes
+  open — skill-check is a transitive supply-chain dependency
+  (single-maintainer npm package, MIT, 68 stars at adoption time).
+  The protection over 0.3.0 is real for cross-agent spec drift, but
+  the marginal value for a one-skill repo is modest.
 - **Keep one vp-git-specific check**: `check-portability.mjs`
   (~50 lines) — flags `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_SKILL_DIR}`
   references and `../` path escapes that break under skills.sh
   symlinked install. skill-check has no equivalent. Warn-only.
-  Honors a future `claude-only: true` frontmatter opt-out.
+  Honors a future `claude-only: true` frontmatter opt-out. This
+  check is the part of 0.5.0 that earns its place unambiguously.
 - **`skill-check.config.json`** — suppresses
   `frontmatter.allowed_tools_format` (Claude Code uses array form)
   and `frontmatter.unknown_fields` (Claude Code defines extra fields
@@ -25,7 +31,7 @@
   satisfy `description.use_when_phrase` and improve trigger matching.
 - Removed `npm run release` and `npm run advisory` scripts — with the
   custom validator gone there is no separate full-mode pass, and the
-  advisory tool is now the primary spec gate.
+  spec gate is now `check:spec`.
 
 ## 0.4.0 (2026-04-28)
 

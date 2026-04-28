@@ -59,14 +59,16 @@ plugin component types. Checks whichever components exist:
 - **Hooks** (`hooks/hooks.json`) -- hook type enums, timeout presence, command
   script existence (if `hooks/` exists)
 
-**Spec compliance -- `skill-check`**: 22-rule validator from the
-`thedaviddias/skill-check` npm package, invoked via npx. Covers length
-caps, name regex, frontmatter shape, description quality, body
+**Spec compliance -- `skill-check` (pilot)**: 22-rule validator from
+the `thedaviddias/skill-check` npm package, invoked via npx. Covers
+length caps, name regex, frontmatter shape, description quality, body
 structure, link health, and quality scoring (0-100). Configuration in
 `skill-check.config.json` suppresses two rules that conflict with
 Claude Code conventions (`frontmatter.allowed_tools_format` —
 Claude Code uses array; `frontmatter.unknown_fields` — Claude Code
-defines `user-invocable`, `paths`, `effort`, `skills`).
+defines `user-invocable`, `paths`, `effort`, `skills`). **Pilot status**
+— this is an experiment for vp-git, not a recommendation. Reassess
+after a release cycle.
 
 **Portability -- `check-portability.mjs`** (warn-only, vp-git specific):
 flags `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_SKILL_DIR}` references and
