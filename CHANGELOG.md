@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.5.0 (2026-04-28)
+
+### Changes
+
+- **Replace in-tree Layer 5 with `skill-check`**. The custom
+  `check-skill-spec.mjs` and its fixture corpus shipped in 0.4.0
+  duplicated `thedaviddias/skill-check`'s 22-rule validator with five
+  in-house rules. Drop the custom validator; invoke
+  `skill-check check --no-security-scan` as `npm run check:spec`.
+  skill-check provides SARIF, auto-fix, body-splitting, baseline diff,
+  and quality scoring for free. Net: ~80% code deletion vs 0.4.0.
+- **Keep one vp-git-specific check**: `check-portability.mjs`
+  (~50 lines) — flags `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_SKILL_DIR}`
+  references and `../` path escapes that break under skills.sh
+  symlinked install. skill-check has no equivalent. Warn-only.
+  Honors a future `claude-only: true` frontmatter opt-out.
+- **`skill-check.config.json`** — suppresses
+  `frontmatter.allowed_tools_format` (Claude Code uses array form)
+  and `frontmatter.unknown_fields` (Claude Code defines extra fields
+  like `user-invocable`). Other rules run with defaults.
+- **rebase-validate** — description updated from "This skill should
+  be used after..." to "...Use when verifying a git rebase..." to
+  satisfy `description.use_when_phrase` and improve trigger matching.
+- Removed `npm run release` and `npm run advisory` scripts — with the
+  custom validator gone there is no separate full-mode pass, and the
+  advisory tool is now the primary spec gate.
+
 ## 0.4.0 (2026-04-28)
 
 ### Features

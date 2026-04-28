@@ -1,6 +1,6 @@
 ---
 name: rebase-validate
-description: "Validates git rebase correctness using a five-layer pipeline (range-diff, sem, weave, jscpd, tests). This skill should be used after completing a git rebase (especially stacked PRs with --update-refs), when comparing branches post-rebase, or when verifying conflict resolution correctness. Covers scenarios like: 'validate rebase', 'check rebase', 'did we lose anything', 'compare before and after rebase', 'duplicate test blocks', 'rebase validation', 'run range-diff', 'lost code during rebase', 'rebase artifacts', 'conflict resolution verification'."
+description: "Validates git rebase correctness using a five-layer pipeline (range-diff, sem, weave, jscpd, tests). Use when verifying a git rebase (especially stacked PRs with --update-refs), comparing branches post-rebase, or auditing conflict resolution correctness. Covers scenarios like: 'validate rebase', 'check rebase', 'did we lose anything', 'compare before and after rebase', 'duplicate test blocks', 'rebase validation', 'run range-diff', 'lost code during rebase', 'rebase artifacts', 'conflict resolution verification'."
 user-invocable: true
 allowed-tools:
   - Bash

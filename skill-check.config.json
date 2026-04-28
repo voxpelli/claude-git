@@ -1,0 +1,22 @@
+{
+  "roots": ["."],
+  "include": ["**/skills/*/SKILL.md"],
+  "exclude": ["**/node_modules/**", "**/.git/**", "**/test/fixtures/**"],
+  "limits": {
+    "maxDescriptionChars": 1024,
+    "maxBodyLines": 500,
+    "minDescriptionChars": 50,
+    "maxBodyTokens": 5000,
+    "maxNameChars": 64,
+    "maxCompatibilityChars": 500
+  },
+  "rules": {
+    "frontmatter.allowed_tools_format": "off",
+    "frontmatter.unknown_fields": "off"
+  },
+  "allowlist": [],
+  "plugins": [],
+  "output": {
+    "format": "text"
+  }
+}
