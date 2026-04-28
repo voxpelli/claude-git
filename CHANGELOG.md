@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0 (2026-04-28)
+
+### Features
+
+- **Cross-agent install** -- The skill is now installable via the open
+  Agent Skills standard from any compatible agent (Claude Code, Cursor,
+  Codex CLI, Gemini CLI, GitHub Copilot, Kiro, ...). Run
+  `npx skills add voxpelli/claude-git` to install without the plugin.
+- **rebase-validate** -- Added `license: MIT` and `compatibility:`
+  frontmatter for spec compliance with [agentskills.io](https://agentskills.io).
+- **rebase-validate** -- Softened two body sentences ("parallel agents")
+  with a sequential-fallback note for agents without a parallel-Agent tool.
+- `validate-plugin.mjs` -- Added type checks for optional `license` and
+  `compatibility` skill frontmatter fields.
+
 ## 0.2.0 (2026-04-06)
 
 ### Improvements

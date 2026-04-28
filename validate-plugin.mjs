@@ -245,6 +245,15 @@ for (const file of skillFiles) {
   if ('effort' in fm && !VALID_EFFORT_VALUES.has(String(fm.effort))) {
     warn(file, `effort "${String(fm.effort)}" is not a recognized value (${[...VALID_EFFORT_VALUES].join(', ')})`)
   }
+  if ('license' in fm && typeof fm.license !== 'string') {
+    error(file, 'license must be a string')
+  }
+  if ('compatibility' in fm) {
+    const compat = fm.compatibility
+    if (typeof compat !== 'string' && !(Array.isArray(compat) && compat.length > 0 && compat.every((c) => typeof c === 'string'))) {
+      error(file, 'compatibility must be a non-empty string or array of strings')
+    }
+  }
 }
 
 // --- Agents (optional) ---

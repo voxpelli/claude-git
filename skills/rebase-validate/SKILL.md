@@ -8,6 +8,8 @@ allowed-tools:
   - Grep
   - Glob
   - Agent
+license: MIT
+compatibility: "Requires git. Optional CLI tools (graceful degradation): sem, weave, jscpd (via npx), ast-grep, python3 (Step 2 summarizer)."
 ---
 
 # Rebase Validation — Five-Layer Pipeline
@@ -37,7 +39,8 @@ Step 5: project validation suite (functional oracle)
 ```
 
 Always run Step 0 first. After Step 0 completes, Steps 1-4 can run as parallel
-agents. Step 5 is the final oracle.
+agents. Step 5 is the final oracle. On agents without a parallel-Agent tool,
+run Steps 1-4 sequentially — they're independent.
 
 ## Step 0: Verify Refs
 
@@ -254,6 +257,10 @@ investigation to determine if it's pre-existing or rebase-introduced.
 
 ## Agent Delegation Pattern
 
+This pattern is optimized for Claude Code's Agent tool. On other agents,
+treat the agent list as a sequential checklist — order doesn't matter
+beyond Step 0 first, Step 5 last.
+
 For large rebases, delegate verification to parallel agents:
 
 ```
@@ -264,10 +271,11 @@ Agent 4: jscpd + grep (duplicate detection)
 Agent 5: project validation suite (lint + types + tests)
 ```
 
-Launch all 5 immediately after rebase. Check `range-diff` and `jscpd` results
-first (arrive in seconds, highest signal). The gap between "rebase complete"
-and "verification results" is dangerous — launch agents immediately, decide
-nothing until results arrive.
+Launch all 5 immediately after rebase (in parallel where supported,
+sequentially otherwise). Check `range-diff` and `jscpd` results first
+(arrive in seconds, highest signal). The gap between "rebase complete"
+and "verification results" is dangerous — kick off verification immediately,
+decide nothing until results arrive.
 
 ## Classifying Findings
 
