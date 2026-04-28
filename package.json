@@ -4,7 +4,11 @@
   "scripts": {
     "check": "run-p check:*",
     "check:plugin": "node validate-plugin.mjs",
-    "check:md": "remark . --quiet --frail"
+    "check:md": "remark . --quiet --frail",
+    "check:layer5": "node check-skill-spec.mjs",
+    "check:fixtures": "node test/check-skill-spec-fixtures.mjs",
+    "release": "npm run check && node check-skill-spec.mjs --full",
+    "advisory": "npx --yes @thedaviddias/skill-check skills/"
   },
   "devDependencies": {
     "js-yaml": "^4.1.0",

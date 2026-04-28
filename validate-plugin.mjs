@@ -1,10 +1,8 @@
 import { readFile, readdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
-import { join, relative } from 'node:path'
+import { join } from 'node:path'
 
-import yaml from 'js-yaml'
-
-const ROOT = new URL('.', import.meta.url).pathname.replace(/\/$/, '')
+import { ROOT, formatError, formatWarn, extractFrontmatter } from './plugin-utils.mjs'
 
 /** @type {string[]} */
 const errors = []
@@ -17,7 +15,7 @@ const warnings = []
  * @param {string} message
  */
 function error (file, message) {
-  errors.push(`${relative(ROOT, file)}: ${message}`)
+  errors.push(formatError(file, message))
 }
 
 /**
@@ -25,7 +23,7 @@ function error (file, message) {
  * @param {string} message
  */
 function warn (file, message) {
-  warnings.push(`${relative(ROOT, file)}: ${message}`)
+  warnings.push(formatWarn(file, message))
 }
 
 /**
@@ -45,23 +43,6 @@ async function readJson (filePath) {
     return JSON.parse(raw)
   } catch {
     error(filePath, 'Invalid JSON')
-    return undefined
-  }
-}
-
-/**
- * @param {string} content
- * @returns {Record<string, unknown> | undefined}
- */
-function extractFrontmatter (content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/)
-  if (!match) return undefined
-  try {
-    const parsed = yaml.load(match[1])
-    return typeof parsed === 'object' && parsed !== null
-      ? /** @type {Record<string, unknown>} */ (parsed)
-      : undefined
-  } catch {
     return undefined
   }
 }

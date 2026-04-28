@@ -18,10 +18,13 @@ skills/
   rebase-validate/SKILL.md               # Five-layer rebase validation pipeline
     references/
       silent-behaviors.md                 # Silent behaviors: tool thresholds, rerere, --update-refs
-validate-plugin.mjs                      # Structural validator (the only JS in the repo)
+plugin-utils.mjs                         # Shared helpers (ROOT, formatError/Warn, extractFrontmatter)
+validate-plugin.mjs                      # Layer 1: structural validator
+check-skill-spec.mjs                     # Layer 5: agentskills.io spec compliance
+test/
+  fixtures/                              # Adversarial corpus (one violation per directory)
+  check-skill-spec-fixtures.mjs          # Fixture runner (plain Node + node:assert)
 ```
-
-Pure markdown + JSON plugin. The only code is `validate-plugin.mjs`.
 
 ## Components
 
@@ -36,14 +39,21 @@ Pure markdown + JSON plugin. The only code is `validate-plugin.mjs`.
 
 ```bash
 npm run check          # run all checks (parallel via npm-run-all2)
-npm run check:plugin   # plugin.json + skill frontmatter validation
+npm run check:plugin   # plugin.json + skill frontmatter validation (Layer 1)
 npm run check:md       # markdown lint (remark)
+npm run check:layer5   # SKILL.md spec compliance, lite mode
+npm run check:fixtures # adversarial fixture corpus
+npm run release        # strict release gate: full check + Layer 5 --full
+npm run advisory       # non-blocking: npx @thedaviddias/skill-check
 ```
 
-### What the Validator Checks
+`release` and `advisory` are deliberately named outside the `check:`
+namespace so `run-p check:*` does not recurse on them.
 
-`validate-plugin.mjs` validates structural correctness across all plugin
-component types. It checks whichever components exist:
+### What the Validators Check
+
+**Layer 1 -- `validate-plugin.mjs`**: structural correctness across all
+plugin component types. Checks whichever components exist:
 
 - **plugin.json** -- required fields (`name`, `version`, `description`)
 - **marketplace.json** -- version consistency with plugin.json (if present)
@@ -55,6 +65,13 @@ component types. It checks whichever components exist:
   references, and MCP prefixes (if `agents/` exists)
 - **Hooks** (`hooks/hooks.json`) -- hook type enums, timeout presence, command
   script existence (if `hooks/` exists)
+
+**Layer 5 -- `check-skill-spec.mjs`**: agentskills.io spec compliance.
+Lite (always): name regex + parent-dir match, length caps
+(`description` ≤ 1024, `name` ≤ 64, `compatibility` ≤ 500), no XML
+brackets in frontmatter values, body portability warnings for
+`${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_SKILL_DIR}` / `../`. Full mode
+(`--full`, release-only): description-quality heuristic.
 
 ### Optional External Tools
 

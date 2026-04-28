@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.4.0 (2026-04-28)
+
+### Features
+
+- **Layer 5 SKILL.md spec compliance** -- New `check-skill-spec.mjs`
+  validator enforces agentskills.io spec rules in addition to the
+  existing structural validation. Lite mode (always on) covers length
+  caps, name regex with parent-directory match, XML-bracket guards in
+  frontmatter, and warn-only body portability checks for
+  `${CLAUDE_PLUGIN_ROOT}` / `${CLAUDE_SKILL_DIR}` / `../` references.
+  Full mode (`npm run release`) adds a description-quality heuristic.
+- **Adversarial fixture corpus** -- `test/fixtures/` with 8 violation
+  scenarios + a baseline; runner wired into `npm run check` via
+  `check:fixtures` so rule regressions surface immediately.
+- **`npm run release`** -- Strict release gate: full check pipeline +
+  full Layer 5 advisory rules. Failures block tagging.
+- **`npm run advisory`** -- Non-blocking invocation of
+  `@thedaviddias/skill-check` for upstream advisory feedback. Exit
+  code is informational; never release-blocking.
+- `plugin-utils.mjs` -- New shared module hoists `ROOT`,
+  `formatError`, `formatWarn`, and `extractFrontmatter` (with CRLF
+  normalization) from `validate-plugin.mjs` so the new validator
+  can reuse them without drift.
+
 ## 0.3.0 (2026-04-28)
 
 ### Features
